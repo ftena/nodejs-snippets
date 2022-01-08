@@ -7,11 +7,11 @@ Node.js snippets
 
 If a project has a package.json file, by running it will install everything the project needs, in the node_modules folder, creating it if it's not existing already:
 
- npm install
+    npm install
 
 You can also install a specific package by running
 
- npm install <package-name>
+    npm install <package-name>
 
 Often you'll see more flags added to this command:
 
@@ -24,6 +24,6 @@ The difference between devDependencies and dependencies is that the former conta
 
 ## Running tasks
 
- npm run <task-name>
+ npm run \<task-name\>
 
  
