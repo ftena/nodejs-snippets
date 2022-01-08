@@ -26,4 +26,22 @@ The difference between devDependencies and dependencies is that the former conta
 
     npm run <task-name>
 
- 
+
+## Installation location
+
+The npm root -g command will tell you where that exact location is on your machine.
+
+## Use or execute a package installed using npm
+
+To use it in your code, you just need to import it into your program using require:
+
+    const express = require('express')
+
+If the package is an executable:
+
+    npm install cowsay
+    npx cowsay take me out of here
+
+## About package.json
+
+More info @ https://nodejs.dev/learn/the-package-json-guide
