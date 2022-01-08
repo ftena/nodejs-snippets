@@ -24,6 +24,6 @@ The difference between devDependencies and dependencies is that the former conta
 
 ## Running tasks
 
-    npm run \<task-name\>
+    npm run <task-name>
 
  
