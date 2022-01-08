@@ -3,11 +3,13 @@ Node.js snippets
 
 # Useful info
 
-## If a project has a package.json file, by running it will install everything the project needs, in the node_modules folder, creating it if it's not existing already:
+## Installing dependencies
+
+If a project has a package.json file, by running it will install everything the project needs, in the node_modules folder, creating it if it's not existing already:
 
  npm install
 
-## You can also install a specific package by running
+You can also install a specific package by running
 
  npm install <package-name>
 
@@ -20,7 +22,7 @@ Often you'll see more flags added to this command:
 
 The difference between devDependencies and dependencies is that the former contains development tools, like a testing library, while the latter is bundled with the app in production.
 
-## Running task
+## Running tasks
 
  npm run <task-name>
 
