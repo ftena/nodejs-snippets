@@ -45,3 +45,4 @@ If the package is an executable:
 ## About package.json
 
 More info @ https://nodejs.dev/learn/the-package-json-guide
+More info @ https://nodejs.dev/learn/the-package-lock-json-file
