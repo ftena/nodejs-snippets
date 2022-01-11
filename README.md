@@ -51,4 +51,4 @@ More info @ https://nodejs.dev/learn/the-package-lock-json-file
 
     npm list 
     npm list -g // for globally installed packages
-    npm view [package_name] version // to see what's the latest available version of the package on the npm repository
+    npm view [package_name] version // to see the latest available version of the package on the npm repository
