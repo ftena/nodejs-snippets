@@ -46,9 +46,27 @@ If the package is an executable:
 
 More info @ https://nodejs.dev/learn/the-package-json-guide
 More info @ https://nodejs.dev/learn/the-package-lock-json-file
+More info @ https://nodejs.dev/learn/uninstalling-npm-packages
 
 ## Find the installed version of an npm package
 
     npm list 
     npm list -g // for globally installed packages
     npm view [package_name] version // to see the latest available version of the package on the npm repository
+
+## npm global or local packages?
+
++ In your code you can only require local packages
++ In general, all packages should be installed locally.
++ Updating a global package would make all your projects use the new release, and as you can imagine this might cause nightmares in terms of maintenance, as some packages might break compatibility with further dependencies, and so on.
++ A package should be installed globally when it provides an executable command that you run from the shell (CLI), and it's reused across projects.
+
+## npm dependencies and devDependencies
+
+When you add the -D flag, or --save-dev, you are installing it as a development dependency, which adds it to the devDependencies list.
+
+Development dependencies are intended as development-only packages, that are unneeded in production. For example testing packages, webpack or Babel.
+
+When you go in production, if you type npm install and the folder contains a package.json file, they are installed, as npm assumes this is a development deploy.
+
+You need to set the --production flag (npm install --production) to avoid installing those development dependencies. 
