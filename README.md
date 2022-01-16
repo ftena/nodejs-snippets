@@ -44,9 +44,9 @@ If the package is an executable:
 
 ## About package.json
 
-More info @ https://nodejs.dev/learn/the-package-json-guide
-More info @ https://nodejs.dev/learn/the-package-lock-json-file
-More info @ https://nodejs.dev/learn/uninstalling-npm-packages
++ More info @ https://nodejs.dev/learn/the-package-json-guide
++ More info @ https://nodejs.dev/learn/the-package-lock-json-file
++ More info @ https://nodejs.dev/learn/uninstalling-npm-packages
 
 ## Find the installed version of an npm package
 
