@@ -69,4 +69,15 @@ Development dependencies are intended as development-only packages, that are unn
 
 When you go in production, if you type npm install and the folder contains a package.json file, they are installed, as npm assumes this is a development deploy.
 
-You need to set the --production flag (npm install --production) to avoid installing those development dependencies. 
+You need to set the --production flag (npm install --production) to avoid installing those development dependencies.
+
+## The npx Node.js Package Runner
+
++ npx lets you run code built with Node.js and published through the npm registry.
++ Examples:
+    + running the vue CLI tool to create new applications and run them: `npx @vue/cli create my-vue-app`
+    + creating a new React app using create-react-app: `npx create-react-app my-react-app`
+
+
+
+ 
