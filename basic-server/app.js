@@ -10,9 +10,9 @@ const server = http.createServer((req, res) => {
   // We set the statusCode property to 200, to indicate a successful response.
   res.statusCode = 200;
   // We set the Content-Type header:
-  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Content-Type', 'text/html');
   // We set the Content-Type header:
-  res.end('Hello World');
+  res.end('<h1>Hello World</h1>');
 });
 
 // When the server is ready, the callback function is called, in this case informing us that the server is running.
