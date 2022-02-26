@@ -6,6 +6,14 @@ const hostname = process.env.HOST
 const port = process.env.PORT
 
 // The createServer() method of http creates a new HTTP server and returns it.
+/* Whenever a new request is received, the request event is called, providing 
+ * two objects: a request (an http.IncomingMessage object) and a response
+ * (an http.ServerResponse object).
+ */
+/* 'request' provides the request details.
+ * Through it, we access the request headers and request data.
+ * 'response' is used to populate the data we're going to return to the client.
+*/
 const server = http.createServer((req, res) => {
   // We set the statusCode property to 200, to indicate a successful response.
   res.statusCode = 200;
