@@ -1,7 +1,7 @@
 const axios = require('axios')
 
 axios
-	.post('https://whatever.com/todos', {
+	.post('/todos', {
 		todo: 'Buy the milk'
 	})
 	.then(res => {

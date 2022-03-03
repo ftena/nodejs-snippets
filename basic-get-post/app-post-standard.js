@@ -1,12 +1,12 @@
-const https = require('https')
+const https = require('http')
 
 const data = JSON.stringify({
 	todo: 'Buy the milk'
 })
 
 const options = {
-	hostname: 'whatever.com',
-	port: 443,
+	hostname: 'localhost',
+	port: 3000,
 	path: '/todos',
 	method: 'POST',
 	headers: {
