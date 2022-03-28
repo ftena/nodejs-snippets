@@ -98,4 +98,31 @@ It can be included using
     + `http.ServerResponse`
     + `http.IncomingMessage`
 
- 
+## Node.js Buffers
+
+More info @ https://nodejs.dev/learn/nodejs-buffers
+
+A buffer is an area of memory. Most JavaScript developers are much less familiar with this concept, compared to programmers using a system programming languages (like C, C++, or Go), which interact directly with memory every day.
+
+To create a buffer:
+
+    const buf = Buffer.from('Hey!')
+    const buf = Buffer.alloc(1024)
+
+To access the content:
+
+    const buf = Buffer.from('Hey!')
+    console.log(buf[0]) //72
+    console.log(buf[1]) //101
+    console.log(buf[2]) //121
+
+You can print the full content of the buffer using the `toString()` method:
+
+    console.log(buf.toString())
+
+To copy a buffer:
+
+    const buf = Buffer.from('Hey!')
+    const bufcopy = Buffer.alloc(4) //allocate 4 bytes
+    bufcopy.set(buf)
+
