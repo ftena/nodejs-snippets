@@ -78,6 +78,27 @@ You need to set the --production flag (npm install --production) to avoid instal
     + running the vue CLI tool to create new applications and run them: `npx @vue/cli create my-vue-app`
     + creating a new React app using create-react-app: `npx create-react-app my-react-app`
 
+## The Node.js http module
+
+More info @ https://nodejs.dev/learn/the-nodejs-http-module
+
+It can be included using
+
+    const http = require('http')
+
++ Methods
+    + `http.createServer()`: returns a new instance of the http.Server class.
+    + `http.request()`: makes an HTTP request to a server, creating an instance of the http.ClientRequest class.
+    + `http.get()`: similar to http.request(), but automatically sets the HTTP method to GET, and calls req.end() automatically.
+
++ The HTTP module provides 5 classes:
+    + http.Agent
+    + http.ClientRequest
+    + http.Server
+    + http.ServerResponse
+    + http.IncomingMessage
+
+
 
 
  
