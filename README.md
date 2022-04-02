@@ -126,3 +126,18 @@ To copy a buffer:
     const bufcopy = Buffer.alloc(4) //allocate 4 bytes
     bufcopy.set(buf)
 
+# Node.js Streams
+
+More info @ https://nodejs.dev/learn/nodejs-streams
+
+They are a way to handle reading/writing files, network communications, or any kind of end-to-end information exchange in an efficient way.
+
+The Node.js `stream` module provides the foundation upon which all streaming APIs are built. All streams are instances of `EventEmitter`
+
+# Development vs production
+
+More info @ https://nodejs.dev/learn/nodejs-the-difference-between-development-and-production
+
+Node.js assumes it's always running in a development environment. You can signal Node.js that you are running in production by setting the `NODE_ENV=production` environment variable.
+
+
