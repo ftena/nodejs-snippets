@@ -1,6 +1,9 @@
 // Node.js with TypeScript
 // More info @ https://nodejs.dev/learn/nodejs-with-typescript
 
+// run next command to get the js file
+//     npx tsc example.ts
+
 type User = {
   name: string;
   age: number;
