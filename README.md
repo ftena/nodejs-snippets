@@ -140,4 +140,6 @@ More info @ https://nodejs.dev/learn/nodejs-the-difference-between-development-a
 
 Node.js assumes it's always running in a development environment. You can signal Node.js that you are running in production by setting the `NODE_ENV=production` environment variable.
 
+# Node.js with WebAssembly
 
+More info @ https://nodejs.dev/learn/nodejs-with-webassembly
