@@ -1,5 +1,8 @@
 // + info @ https://nodejs.dev/learn/making-http-requests-with-nodejs
-// The simplest way to perform an HTTP request using Node.js is to use the Axios library.
+// There are many ways to perform an HTTP GET request in Node.js,
+// depending on the abstraction level you want to use.
+// The simplest way to perform an HTTP request using Node.js
+// is to use the Axios library.
 
 const axios = require('axios')
 
