@@ -16,7 +16,7 @@ const req = https.request(options, res => {
 	console.log(`statusCode: ${res.statusCode}`)
 
 	res.on('data', d => {
-		console.error("data!")
+		console.log("data!")
 		// process.stdout.write(d)
 	})
 })
