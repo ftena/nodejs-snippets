@@ -23,7 +23,7 @@ const server = http.createServer((req, res) => {
   res.end('<h1>Hello World</h1>');
 
   req.on('data', chunk => {
-      console.log(`Data chunk available: ${chunk}`)
+      console.log('req.method: ' + req.method + ` Data chunk available: ${chunk}`)
   })
 
   req.on('end', () => {
