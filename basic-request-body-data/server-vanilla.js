@@ -24,11 +24,17 @@ const server = http.createServer((req, res) => {
 
   req.on('data', chunk => {
       console.log('req.method: ' + req.method + ` Data chunk available: ${chunk}`)
+      data += chunk
   })
 
   req.on('end', () => {
-    console.log(JSON.parse(data).todo); // 'Buy the milk'
-    res.end();
+    try {
+        console.log(JSON.parse(data).todo); // 'Buy the milk'
+        res.end();
+    } catch (e) {
+        console.error(e.message);
+    }
+
   })
 });
 
