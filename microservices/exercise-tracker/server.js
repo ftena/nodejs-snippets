@@ -21,8 +21,6 @@ const Schema = mongoose.Schema;
 // Create a user schema called userSchema
 let userSchema = new Schema({
   username: {type: String, required: true},
-  age: Number,  
-  favoriteFoods: [String]
 });
 
 // Create a model called User from the userSchema
@@ -30,7 +28,6 @@ let User = mongoose.model("User", userSchema);
 
 // Exercise
 let exerciseSchema = new Schema({
-  username: {type: String, required: true},
   description: String,  
   duration: Number,
   date: Date
@@ -51,18 +48,42 @@ let Log = mongoose.model("Log", logSchema);
 app.post('/api/users', function(req, res)
 {
   console.log(req.body)
-  res.end()  
+
+  const newUser = new User
+  newUser.username = req.body.username
+
+  newUser.save(function(err, savedDoc) {
+    if (err) {
+      res.status(400).send(err)
+    } else
+    {
+      res.json()
+    }
+  }); 
 })
 
 // Post api/users
-app.post('/api/users/:_id/exercises', function(req, res)
+app.post('/api/users/:_id/exercises', async function(req, res)
 {
+  // We will save the document in this case using async/await instead of callbacks
+  // more info @ https://mongoosejs.com/docs/async-await.html
   console.log(req.body)
-  res.end()  
+  console.log(req.params)
+  
+  try {
+    const newExercise = new Exercise
+    newExercise.description = req.body.description
+    newExercise.duration = req.body.duration
+    newExercise.date = req.body.date
+
+    console.log(await newExercise.save()) 
+    res.json()
+  } catch (err) {
+    // more info @ http://expressjs.com/en/5x/api.html#res.status
+    res.status(400).send(err)
+  }
+  
 })
-
-
-
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
