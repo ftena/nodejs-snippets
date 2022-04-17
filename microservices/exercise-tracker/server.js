@@ -57,7 +57,7 @@ app.post('/api/users', function(req, res)
       res.status(400).send(err)
     } else
     {
-      res.json()
+      res.json(savedDoc)
     }
   }); 
 })
