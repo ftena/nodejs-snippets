@@ -57,7 +57,7 @@ app.post('/api/users', function(req, res)
       res.status(400).send(err)
     } else
     {
-      res.json(savedDoc)
+      res.json({username: savedDoc.username, _id: savedDoc._id})
     }
   }); 
 })
@@ -76,8 +76,21 @@ app.post('/api/users/:_id/exercises', async function(req, res)
     newExercise.duration = req.body.duration
     newExercise.date = req.body.date
 
-    console.log(await newExercise.save()) 
-    res.json()
+    const exercise = await newExercise.save()
+
+    // Save log
+    const newLog = new Log
+    newLog.username = ""
+    newLog.count = 0
+    newLog.log.push({description: exercise.description, duration: exercise.duration, date: exercise.date})
+
+
+    res.json({
+      description: exercise.description,
+      duration: exercise.duration,
+      date: new Date(exercise.date).toDateString(),
+      _id: exercise._id
+     })
   } catch (err) {
     // more info @ http://expressjs.com/en/5x/api.html#res.status
     res.status(400).send(err)
