@@ -20,6 +20,7 @@ const Schema = mongoose.Schema;
 
 // Create a user schema called userSchema
 let userSchema = new Schema({
+  _id: Schema.Types.ObjectId,
   username: {type: String, required: true},
 });
 
@@ -28,6 +29,7 @@ let User = mongoose.model("User", userSchema);
 
 // Exercise
 let exerciseSchema = new Schema({
+  username: {type: String, required: true},
   description: String,  
   duration: Number,
   date: Date
@@ -83,7 +85,6 @@ app.post('/api/users/:_id/exercises', async function(req, res)
     newLog.username = ""
     newLog.count = 0
     newLog.log.push({description: exercise.description, duration: exercise.duration, date: exercise.date})
-
 
     res.json({
       description: exercise.description,
