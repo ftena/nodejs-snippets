@@ -20,7 +20,6 @@ const Schema = mongoose.Schema;
 
 // Create a user schema called userSchema
 let userSchema = new Schema({
-  _id: Schema.Types.ObjectId,
   username: {type: String, required: true},
 });
 
@@ -59,6 +58,7 @@ app.post('/api/users', function(req, res)
       res.status(400).send(err)
     } else
     {
+      console.log(savedDoc)
       res.json({username: savedDoc.username, _id: savedDoc._id})
     }
   }); 
@@ -73,20 +73,25 @@ app.post('/api/users/:_id/exercises', async function(req, res)
   console.log(req.params)
   
   try {
+    const userFound = await User.findById({_id: req.params._id})
+    
     const newExercise = new Exercise
+    newExercise.username = userFound.username
     newExercise.description = req.body.description
     newExercise.duration = req.body.duration
     newExercise.date = req.body.date
 
+    // If save is successful, the returned promise will fulfill with the document saved.
     const exercise = await newExercise.save()
 
     // Save log
     const newLog = new Log
-    newLog.username = ""
+    newLog.username = userFound.username
     newLog.count = 0
     newLog.log.push({description: exercise.description, duration: exercise.duration, date: exercise.date})
 
     res.json({
+      username: userFound.username,
       description: exercise.description,
       duration: exercise.duration,
       date: new Date(exercise.date).toDateString(),
