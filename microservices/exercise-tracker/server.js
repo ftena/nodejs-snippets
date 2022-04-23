@@ -84,20 +84,35 @@ app.post('/api/users/:_id/exercises', async function(req, res)
     // If save is successful, the returned promise will fulfill with the document saved.
     const exercise = await newExercise.save()
 
-    // Save log
-    const newLog = new Log
-    newLog.username = userFound.username
-    newLog.count = 0
-    newLog.log.push({description: exercise.description, duration: exercise.duration, date: exercise.date})
-    const log = await newLog.save()
-
+    // Save/update log
+    const log = await Log.findOneAndUpdate({ username: userFound.username })
+    
+    if (!log) { // new log
+      const newLog = new Log
+      newLog.username = userFound.username
+      newLog.count = 1
+      newLog.log.push({
+        description: exercise.description,
+        duration: exercise.duration,
+        date: exercise.date
+      })      
+    } else { // update log
+      log.count += 1
+      log.log.push({
+        description: exercise.description,
+        duration: exercise.duration,
+        date: exercise.date
+      })
+      await log.save()      
+    }
+    
     res.json({
       username: userFound.username,
       description: exercise.description,
       duration: exercise.duration,
       date: new Date(exercise.date).toDateString(),
       _id: userFound._id
-     })
+    })
   } catch (err) {
     // more info @ http://expressjs.com/en/5x/api.html#res.status
     res.status(400).send(err)
