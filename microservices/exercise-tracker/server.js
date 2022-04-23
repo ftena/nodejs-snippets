@@ -45,7 +45,7 @@ let logSchema = new Schema({
 });
 let Log = mongoose.model("Log", logSchema);
 
-// Post api/users
+// Post /api/users
 app.post('/api/users', function(req, res)
 {
   console.log(req.body)
@@ -64,7 +64,7 @@ app.post('/api/users', function(req, res)
   }); 
 })
 
-// Post api/users
+// Post /api/users/:_id/exercises
 app.post('/api/users/:_id/exercises', async function(req, res)
 {
   // We will save the document in this case using async/await instead of callbacks
@@ -101,9 +101,20 @@ app.post('/api/users/:_id/exercises', async function(req, res)
     // more info @ http://expressjs.com/en/5x/api.html#res.status
     res.status(400).send(err)
   }
-  
 })
 
+app.get('/api/users', async function (req, res) {
+  try {
+    // find all documents
+    const userFounds = await User.find({}, 'username _id')
+    res.json(userFounds)
+
+  } catch {
+    res.status(400).send(err)
+  }
+})
+
+/* *** */
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
