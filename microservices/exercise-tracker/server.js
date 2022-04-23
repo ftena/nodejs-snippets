@@ -89,13 +89,14 @@ app.post('/api/users/:_id/exercises', async function(req, res)
     newLog.username = userFound.username
     newLog.count = 0
     newLog.log.push({description: exercise.description, duration: exercise.duration, date: exercise.date})
+    const log = await newLog.save()
 
     res.json({
       username: userFound.username,
       description: exercise.description,
       duration: exercise.duration,
       date: new Date(exercise.date).toDateString(),
-      _id: exercise._id
+      _id: userFound._id
      })
   } catch (err) {
     // more info @ http://expressjs.com/en/5x/api.html#res.status
@@ -108,7 +109,17 @@ app.get('/api/users', async function (req, res) {
     // find all documents
     const userFounds = await User.find({}, 'username _id')
     res.json(userFounds)
+  } catch {
+    res.status(400).send(err)
+  }
+})
 
+app.get('/api/users/:_id/logs', async function (req, res) {
+  try {
+    // find user's exercise log
+    const userFound = await User.findById({_id: req.params._id})
+    const logFound = await Log.find({username: userFound.username})
+    res.json(logFound)   
   } catch {
     res.status(400).send(err)
   }
