@@ -96,6 +96,7 @@ app.post('/api/users/:_id/exercises', async function(req, res)
         duration: exercise.duration,
         date: exercise.date
       })      
+      await newLog.save()
     } else { // update log
       log.count += 1
       log.log.push({
@@ -134,6 +135,11 @@ app.get('/api/users/:_id/logs', async function (req, res) {
     // find user's exercise log
     const userFound = await User.findById({_id: req.params._id})
     const logFound = await Log.find({username: userFound.username})
+
+    let log = {
+      username: userFound.username
+    }
+    
     res.json(logFound)   
   } catch {
     res.status(400).send(err)
