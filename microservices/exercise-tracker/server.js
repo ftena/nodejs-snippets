@@ -48,7 +48,7 @@ let Log = mongoose.model("Log", logSchema);
 // Post /api/users
 app.post('/api/users', function(req, res)
 {
-  console.log(req.body)
+  // console.log(req.body)
 
   const newUser = new User
   newUser.username = req.body.username
@@ -57,8 +57,7 @@ app.post('/api/users', function(req, res)
     if (err) {
       res.status(400).send(err)
     } else
-    {
-      console.log(savedDoc)
+    {      
       res.json({username: savedDoc.username, _id: savedDoc._id})
     }
   }); 
@@ -68,9 +67,7 @@ app.post('/api/users', function(req, res)
 app.post('/api/users/:_id/exercises', async function(req, res)
 {
   // We will save the document in this case using async/await instead of callbacks
-  // more info @ https://mongoosejs.com/docs/async-await.html
-  console.log(req.body)
-  console.log(req.params)
+  // more info @ https://mongoosejs.com/docs/async-await.html  
   
   try {
     const userFound = await User.findById({_id: req.params._id})
@@ -91,8 +88,8 @@ app.post('/api/users/:_id/exercises', async function(req, res)
     const exercise = await newExercise.save()
 
     // Save/update log
-    const log = await Log.findOneAndUpdate({ username: userFound.username })
-    
+    const log = await Log.findOne({ username: userFound.username })
+
     if (!log) { // new log
       const newLog = new Log
       newLog.username = userFound.username
@@ -110,7 +107,7 @@ app.post('/api/users/:_id/exercises', async function(req, res)
         duration: exercise.duration,
         date: exercise.date
       })
-      await log.save()      
+      await log.save()
     }
     
     res.json({
@@ -126,6 +123,7 @@ app.post('/api/users/:_id/exercises', async function(req, res)
   }
 })
 
+// GET request to get a list of all users.
 app.get('/api/users', async function (req, res) {
   try {
     // find all documents
@@ -160,12 +158,12 @@ app.get('/api/users/:_id/logs', async function (req, res) {
     }
     */
 
-    // Second, an better, way
+    // Second - and better - way
     // Parantheses are needed to return ab object.
     log.log = logFound.log.map(value => ({
       description: value.description,
       duration: value.duration,
-      date: value.date
+      date: new Date(value.date).toDateString()
     }));
 
     res.json(log)   
