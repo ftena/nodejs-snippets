@@ -49,7 +49,7 @@ let Log = mongoose.model("Log", logSchema);
 
 // Post /api/users
 app.post('/api/users', function(req, res) {
-  // console.log(req.body)
+  console.log(req.body)
 
   const newUser = new User
   newUser.username = req.body.username
@@ -132,7 +132,7 @@ app.get('/api/users', async function(req, res) {
   }
 })
 
-/* A GET request to /api/users/:id/logs will return
+/* GET request to /api/users/:id/logs will return
  * the user object with a log array of all the exercises added.
 */
 /* You can add from, to and limit parameters to
@@ -145,6 +145,29 @@ app.get('/api/users', async function(req, res) {
 // Ex: /api/users/62654b72c672a004d6516ffc/logs?from=2022-04-24&to=2022-04-24&limit=3
 app.get('/api/users/:_id/logs', async function(req, res) {
   try {
+    // destructure and rename the keys
+    var { from: fromValue, to: toValue, limit: limitValue } = req.query;
+
+    console.log(req.query)
+    
+    // find user's exercise log
+    const userFound = await User.findById({ _id: req.params._id })
+
+    // remember: Mongoose queries are not promises.
+    // more info @ https://mongoosejs.com/docs/queries.html#queries-are-not-promises
+    // and more info @ https://masteringjs.io/tutorials/mongoose/query
+    const logQuery = Log.findOne({ username: userFound.username })
+
+    if (fromValue) {
+      logQuery.where({ 'log.date': { $gte: fromValue } })
+    }
+
+    if (toValue) {
+      logQuery.where({ 'log.date': { $lte: toValue } })
+    }
+    
+    const logFound = await logQuery
+
     // object setup
     let log = {
       username: logFound.username,
@@ -152,56 +175,33 @@ app.get('/api/users/:_id/logs', async function(req, res) {
       _id: userFound._id,
       log: []
     }
-
-    // destructure and rename the keys
-    var { from: fromValue, to: toValue, limit: limitValue } = req.query;
     
-    // find user's exercise log
-    const userFound = await User.findById({ _id: req.params._id })
-    
-    // remember: Mongoose queries are not promises.
-    // more info @ https://mongoosejs.com/docs/queries.html#queries-are-not-promises
-    // and more info @ https://masteringjs.io/tutorials/mongoose/query
-    const logFound = Log.findOne({ username: userFound.username })
-
-    if (fromValue) {
-      logFound.where('date').gt(from)
+    // First way
+    /*
+    for (let i = 0; i < logFound.log.length; i++) {
+      log.log.push({
+        description: logFound.log[i].description,
+        duration: logFound.log[i].duration,
+        date: logFound.log[i].date
+      })
     }
+    */
+    // console.log("here: " + logFound)
+    // Second - and better - way
+    // Parantheses are needed to return ab object.
+    log.log = logFound.log.map(value => ({
+      description: value.description,
+      duration: value.duration,
+      date: new Date(value.date).toDateString()
+    }));
 
-    if (toValue) {
-      logFound.where('date').lt(toValue)
-    }
-
+    // limit how many logs to send back
     if (limitValue) {
-      logFound.limit(limitValue)
+      log.log.splice(limitValue)
+      log.count = log.log.length
     }
 
-    logFound.exec(function(err, queriedDoc) {
-      if (err) {
-        res.status(400).send(err)
-      } else {
-        // First way
-        /*
-        for (let i = 0; i < logFound.log.length; i++) {
-          log.log.push({
-            description: logFound.log[i].description,
-            duration: logFound.log[i].duration,
-            date: logFound.log[i].date
-          })
-        }
-        */
-        console.log("here: " + querieDoc)
-        // Second - and better - way
-        // Parantheses are needed to return ab object.
-        log.log = queriedDoc.log.map(value => ({
-          description: value.description,
-          duration: value.duration,
-          date: new Date(value.date).toDateString()
-        }));
-
-        res.json(log)
-      }
-    });
+    res.json(log)
   } catch (err) {
     res.status(400).send(err)
   }
