@@ -134,12 +134,24 @@ app.get('/api/users', async function (req, res) {
   }
 })
 
+/* A GET request to /api/users/:id/logs will return
+ * the user object with a log array of all the exercises added.
+*/
+/* You can add from, to and limit parameters to
+ * a GET /api/users/:_id/logs request to retrieve part
+ * of the log of any user.
+ * /api/users/:_id/logs?[from][&to][&limit]
+ * + from and to are dates in yyyy-mm-dd format.
+ * + limit is an integer of how many logs to send back.
+*/
+// Ex: /api/users/62654b72c672a004d6516ffc/logs?from=2022-04-24&to=2022-04-24&limit=3
 app.get('/api/users/:_id/logs', async function (req, res) {
   try {
     // find user's exercise log
     const userFound = await User.findById({_id: req.params._id})
     const logFound = await Log.findOne({username: userFound.username})
 
+    // object setup
     let log = {
       username: logFound.username,
       count: logFound.count,
@@ -147,6 +159,9 @@ app.get('/api/users/:_id/logs', async function (req, res) {
       log: [] 
     }
 
+    // destructure and rename the keys
+    var { from: fromValue, to: toValue, limit: limitValue } = req.query;    
+    
     // First way
     /*
     for (let i = 0; i < logFound.log.length; i++) {
