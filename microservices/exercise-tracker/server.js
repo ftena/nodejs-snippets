@@ -125,7 +125,7 @@ app.get('/api/users', async function (req, res) {
     // find all documents
     const userFounds = await User.find({}, 'username _id')
     res.json(userFounds)
-  } catch {
+  } catch (err) {
     res.status(400).send(err)
   }
 })
@@ -134,14 +134,36 @@ app.get('/api/users/:_id/logs', async function (req, res) {
   try {
     // find user's exercise log
     const userFound = await User.findById({_id: req.params._id})
-    const logFound = await Log.find({username: userFound.username})
+    const logFound = await Log.findOne({username: userFound.username})
 
     let log = {
-      username: userFound.username
+      username: logFound.username,
+      count: logFound.count,
+      _id: userFound._id,
+      log: [] 
     }
-    
-    res.json(logFound)   
-  } catch {
+
+    // First way
+    /*
+    for (let i = 0; i < logFound.log.length; i++) {
+      log.log.push({
+        description: logFound.log[i].description,
+        duration: logFound.log[i].duration,
+        date: logFound.log[i].date
+      })
+    }
+    */
+
+    // Second, an better, way
+    // Parantheses are needed to return ab object.
+    log.log = logFound.log.map(value => ({
+      description: value.description,
+      duration: value.duration,
+      date: value.date
+    }));
+
+    res.json(log)   
+  } catch (err) {
     res.status(400).send(err)
   }
 })
