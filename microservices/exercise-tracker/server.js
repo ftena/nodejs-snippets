@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 });
 
 /* Use body-parser to parse post requests */
-app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -20,7 +20,7 @@ const Schema = mongoose.Schema;
 
 // Create a user schema called userSchema
 let userSchema = new Schema({
-  username: {type: String, required: true},
+  username: { type: String, required: true },
 });
 
 // Create a model called User from the userSchema
@@ -28,8 +28,8 @@ let User = mongoose.model("User", userSchema);
 
 // Exercise
 let exerciseSchema = new Schema({
-  username: {type: String, required: true},
-  description: String,  
+  username: { type: String, required: true },
+  description: String,
   duration: Number,
   date: Date
 });
@@ -37,17 +37,18 @@ let Exercise = mongoose.model("Exercise", exerciseSchema);
 
 // Log
 let logSchema = new Schema({
-  username: {type: String, required: true},
-  count: Number,  
-  log: [{description: String,  
-  duration: Number,
-  date: Date}]
+  username: { type: String, required: true },
+  count: Number,
+  log: [{
+    description: String,
+    duration: Number,
+    date: Date
+  }]
 });
 let Log = mongoose.model("Log", logSchema);
 
 // Post /api/users
-app.post('/api/users', function(req, res)
-{
+app.post('/api/users', function(req, res) {
   // console.log(req.body)
 
   const newUser = new User
@@ -56,29 +57,26 @@ app.post('/api/users', function(req, res)
   newUser.save(function(err, savedDoc) {
     if (err) {
       res.status(400).send(err)
-    } else
-    {      
-      res.json({username: savedDoc.username, _id: savedDoc._id})
+    } else {
+      res.json({ username: savedDoc.username, _id: savedDoc._id })
     }
-  }); 
+  });
 })
 
 // Post /api/users/:_id/exercises
-app.post('/api/users/:_id/exercises', async function(req, res)
-{
+app.post('/api/users/:_id/exercises', async function(req, res) {
   // We will save the document in this case using async/await instead of callbacks
   // more info @ https://mongoosejs.com/docs/async-await.html  
-  
+
   try {
-    const userFound = await User.findById({_id: req.params._id})
-    
+    const userFound = await User.findById({ _id: req.params._id })
+
     const newExercise = new Exercise
     newExercise.username = userFound.username
     newExercise.description = req.body.description
     newExercise.duration = req.body.duration
 
-    if (req.body.date)
-    {
+    if (req.body.date) {
       newExercise.date = req.body.date
     } else {
       newExercise.date = new Date()
@@ -98,7 +96,7 @@ app.post('/api/users/:_id/exercises', async function(req, res)
         description: exercise.description,
         duration: exercise.duration,
         date: exercise.date
-      })      
+      })
       await newLog.save()
     } else { // update log
       log.count += 1
@@ -109,7 +107,7 @@ app.post('/api/users/:_id/exercises', async function(req, res)
       })
       await log.save()
     }
-    
+
     res.json({
       username: userFound.username,
       description: exercise.description,
@@ -124,7 +122,7 @@ app.post('/api/users/:_id/exercises', async function(req, res)
 })
 
 // GET request to get a list of all users.
-app.get('/api/users', async function (req, res) {
+app.get('/api/users', async function(req, res) {
   try {
     // find all documents
     const userFounds = await User.find({}, 'username _id')
@@ -145,43 +143,65 @@ app.get('/api/users', async function (req, res) {
  * + limit is an integer of how many logs to send back.
 */
 // Ex: /api/users/62654b72c672a004d6516ffc/logs?from=2022-04-24&to=2022-04-24&limit=3
-app.get('/api/users/:_id/logs', async function (req, res) {
+app.get('/api/users/:_id/logs', async function(req, res) {
   try {
-    // find user's exercise log
-    const userFound = await User.findById({_id: req.params._id})
-    const logFound = await Log.findOne({username: userFound.username})
-
     // object setup
     let log = {
       username: logFound.username,
       count: logFound.count,
       _id: userFound._id,
-      log: [] 
+      log: []
     }
 
     // destructure and rename the keys
-    var { from: fromValue, to: toValue, limit: limitValue } = req.query;    
+    var { from: fromValue, to: toValue, limit: limitValue } = req.query;
     
-    // First way
-    /*
-    for (let i = 0; i < logFound.log.length; i++) {
-      log.log.push({
-        description: logFound.log[i].description,
-        duration: logFound.log[i].duration,
-        date: logFound.log[i].date
-      })
+    // find user's exercise log
+    const userFound = await User.findById({ _id: req.params._id })
+    
+    // remember: Mongoose queries are not promises.
+    // more info @ https://mongoosejs.com/docs/queries.html#queries-are-not-promises
+    // and more info @ https://masteringjs.io/tutorials/mongoose/query
+    const logFound = Log.findOne({ username: userFound.username })
+
+    if (fromValue) {
+      logFound.where('date').gt(from)
     }
-    */
 
-    // Second - and better - way
-    // Parantheses are needed to return ab object.
-    log.log = logFound.log.map(value => ({
-      description: value.description,
-      duration: value.duration,
-      date: new Date(value.date).toDateString()
-    }));
+    if (toValue) {
+      logFound.where('date').lt(toValue)
+    }
 
-    res.json(log)   
+    if (limitValue) {
+      logFound.limit(limitValue)
+    }
+
+    logFound.exec(function(err, queriedDoc) {
+      if (err) {
+        res.status(400).send(err)
+      } else {
+        // First way
+        /*
+        for (let i = 0; i < logFound.log.length; i++) {
+          log.log.push({
+            description: logFound.log[i].description,
+            duration: logFound.log[i].duration,
+            date: logFound.log[i].date
+          })
+        }
+        */
+        console.log("here: " + querieDoc)
+        // Second - and better - way
+        // Parantheses are needed to return ab object.
+        log.log = queriedDoc.log.map(value => ({
+          description: value.description,
+          duration: value.duration,
+          date: new Date(value.date).toDateString()
+        }));
+
+        res.json(log)
+      }
+    });
   } catch (err) {
     res.status(400).send(err)
   }
