@@ -79,7 +79,13 @@ app.post('/api/users/:_id/exercises', async function(req, res)
     newExercise.username = userFound.username
     newExercise.description = req.body.description
     newExercise.duration = req.body.duration
-    newExercise.date = req.body.date
+
+    if (req.body.date)
+    {
+      newExercise.date = req.body.date
+    } else {
+      newExercise.date = new Date()
+    }
 
     // If save is successful, the returned promise will fulfill with the document saved.
     const exercise = await newExercise.save()
