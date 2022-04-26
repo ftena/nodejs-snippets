@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 });
 
 /* Use body-parser to parse post requests */
-app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -20,7 +20,7 @@ const Schema = mongoose.Schema;
 
 // Create a user schema called userSchema
 let userSchema = new Schema({
-  username: {type: String, required: true},
+  username: { type: String, required: true },
 });
 
 // Create a model called User from the userSchema
@@ -28,8 +28,8 @@ let User = mongoose.model("User", userSchema);
 
 // Exercise
 let exerciseSchema = new Schema({
-  username: {type: String, required: true},
-  description: String,  
+  username: { type: String, required: true },
+  description: String,
   duration: Number,
   date: Date
 });
@@ -37,17 +37,18 @@ let Exercise = mongoose.model("Exercise", exerciseSchema);
 
 // Log
 let logSchema = new Schema({
-  username: {type: String, required: true},
-  count: Number,  
-  log: [{description: String,  
-  duration: Number,
-  date: Date}]
+  username: { type: String, required: true },
+  count: Number,
+  log: [{
+    description: String,
+    duration: Number,
+    date: Date
+  }]
 });
 let Log = mongoose.model("Log", logSchema);
 
 // Post /api/users
-app.post('/api/users', function(req, res)
-{
+app.post('/api/users', function(req, res) {
   console.log(req.body)
 
   const newUser = new User
@@ -56,32 +57,26 @@ app.post('/api/users', function(req, res)
   newUser.save(function(err, savedDoc) {
     if (err) {
       res.status(400).send(err)
-    } else
-    {
-      console.log(savedDoc)
-      res.json({username: savedDoc.username, _id: savedDoc._id})
+    } else {
+      res.json({ username: savedDoc.username, _id: savedDoc._id })
     }
-  }); 
+  });
 })
 
 // Post /api/users/:_id/exercises
-app.post('/api/users/:_id/exercises', async function(req, res)
-{
+app.post('/api/users/:_id/exercises', async function(req, res) {
   // We will save the document in this case using async/await instead of callbacks
-  // more info @ https://mongoosejs.com/docs/async-await.html
-  console.log(req.body)
-  console.log(req.params)
-  
+  // more info @ https://mongoosejs.com/docs/async-await.html  
+
   try {
-    const userFound = await User.findById({_id: req.params._id})
-    
+    const userFound = await User.findById({ _id: req.params._id })
+
     const newExercise = new Exercise
     newExercise.username = userFound.username
     newExercise.description = req.body.description
     newExercise.duration = req.body.duration
 
-    if (req.body.date)
-    {
+    if (req.body.date) {
       newExercise.date = req.body.date
     } else {
       newExercise.date = new Date()
@@ -91,8 +86,8 @@ app.post('/api/users/:_id/exercises', async function(req, res)
     const exercise = await newExercise.save()
 
     // Save/update log
-    const log = await Log.findOneAndUpdate({ username: userFound.username })
-    
+    const log = await Log.findOne({ username: userFound.username })
+
     if (!log) { // new log
       const newLog = new Log
       newLog.username = userFound.username
@@ -101,7 +96,7 @@ app.post('/api/users/:_id/exercises', async function(req, res)
         description: exercise.description,
         duration: exercise.duration,
         date: exercise.date
-      })      
+      })
       await newLog.save()
     } else { // update log
       log.count += 1
@@ -110,9 +105,9 @@ app.post('/api/users/:_id/exercises', async function(req, res)
         duration: exercise.duration,
         date: exercise.date
       })
-      await log.save()      
+      await log.save()
     }
-    
+
     res.json({
       username: userFound.username,
       description: exercise.description,
@@ -126,7 +121,8 @@ app.post('/api/users/:_id/exercises', async function(req, res)
   }
 })
 
-app.get('/api/users', async function (req, res) {
+// GET request to get a list of all users.
+app.get('/api/users', async function(req, res) {
   try {
     // find all documents
     const userFounds = await User.find({}, 'username _id')
@@ -136,19 +132,50 @@ app.get('/api/users', async function (req, res) {
   }
 })
 
-app.get('/api/users/:_id/logs', async function (req, res) {
+/* GET request to /api/users/:id/logs will return
+ * the user object with a log array of all the exercises added.
+*/
+/* You can add from, to and limit parameters to
+ * a GET /api/users/:_id/logs request to retrieve part
+ * of the log of any user.
+ * /api/users/:_id/logs?[from][&to][&limit]
+ * + from and to are dates in yyyy-mm-dd format.
+ * + limit is an integer of how many logs to send back.
+*/
+// Ex: /api/users/62654b72c672a004d6516ffc/logs?from=2022-04-24&to=2022-04-24&limit=3
+app.get('/api/users/:_id/logs', async function(req, res) {
   try {
-    // find user's exercise log
-    const userFound = await User.findById({_id: req.params._id})
-    const logFound = await Log.findOne({username: userFound.username})
+    // destructure and rename the keys
+    var { from: fromValue, to: toValue, limit: limitValue } = req.query;
 
+    console.log(req.query)
+    
+    // find user's exercise log
+    const userFound = await User.findById({ _id: req.params._id })
+
+    // remember: Mongoose queries are not promises.
+    // more info @ https://mongoosejs.com/docs/queries.html#queries-are-not-promises
+    // and more info @ https://masteringjs.io/tutorials/mongoose/query
+    const logQuery = Log.findOne({ username: userFound.username })
+
+    if (fromValue) {
+      logQuery.where({ 'log.date': { $gte: fromValue } })
+    }
+
+    if (toValue) {
+      logQuery.where({ 'log.date': { $lte: toValue } })
+    }
+    
+    const logFound = await logQuery
+
+    // object setup
     let log = {
       username: logFound.username,
       count: logFound.count,
       _id: userFound._id,
-      log: [] 
+      log: []
     }
-
+    
     // First way
     /*
     for (let i = 0; i < logFound.log.length; i++) {
@@ -159,16 +186,22 @@ app.get('/api/users/:_id/logs', async function (req, res) {
       })
     }
     */
-
-    // Second, an better, way
+    // console.log("here: " + logFound)
+    // Second - and better - way
     // Parantheses are needed to return ab object.
     log.log = logFound.log.map(value => ({
       description: value.description,
       duration: value.duration,
-      date: value.date
+      date: new Date(value.date).toDateString()
     }));
 
-    res.json(log)   
+    // limit how many logs to send back
+    if (limitValue) {
+      log.log.splice(limitValue)
+      log.count = log.log.length
+    }
+
+    res.json(log)
   } catch (err) {
     res.status(400).send(err)
   }
