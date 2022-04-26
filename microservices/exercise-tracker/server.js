@@ -159,6 +159,7 @@ app.get('/api/users/:_id/logs', async function(req, res) {
     const logQuery = Log.findOne({ username: userFound.username })
 
     if (fromValue) {
+      // more info @ https://stackoverflow.com/questions/16325817/in-mongoose-how-to-filter-an-array-of-objects
       logQuery.where({ 'log.date': { $gte: fromValue } })
     }
 
@@ -186,7 +187,7 @@ app.get('/api/users/:_id/logs', async function(req, res) {
       })
     }
     */
-    // console.log("here: " + logFound)
+    
     // Second - and better - way
     // Parantheses are needed to return ab object.
     log.log = logFound.log.map(value => ({
