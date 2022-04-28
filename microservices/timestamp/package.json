@@ -1,7 +1,7 @@
 {
 	"name": "timestamp",
 	"version": "0.0.1",
-	"description": "timestamp microservice - from an FCC Backend Challenge",
+	"description": "API project for freeCodeCamp",
 	"main": "server.js",
 	"scripts": {
 		"start": "node server.js"
@@ -12,8 +12,7 @@
 	},
 	"keywords": [
 		"node",
-		"express",
-		"freecodecamp"
+		"express"
 	],
 	"license": "MIT"
 }

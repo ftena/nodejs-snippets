@@ -12,10 +12,6 @@
     "express": "^4.16.4",
     "multer": "^1.4.4"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/freeCodeCamp/boilerplate-project-filemetadata"
-  },
   "keywords": [
     "node",
     "express"
