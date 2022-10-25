@@ -1,5 +1,5 @@
 // Exceptions with promises
-//Using promises you can chain different operations, and handle errors at the end:
+// Using promises you can chain different operations, and handle errors at the end:
 
 const doSomething1 = new Promise((resolve, reject) => {
   //...
