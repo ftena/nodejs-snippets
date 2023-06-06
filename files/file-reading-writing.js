@@ -1,5 +1,4 @@
 // more info @ https://nodejs.dev/learn/reading-files-with-nodejs
-// more info @ https://nodejs.dev/learn/writing-files-with-nodejs
 
 const fs = require('fs')
 
